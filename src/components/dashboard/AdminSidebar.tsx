@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -29,7 +28,11 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 
-const AdminSidebar = () => {
+interface AdminSidebarProps {
+  onWidthChange?: (width: string) => void;
+}
+
+const AdminSidebar = ({ onWidthChange }: AdminSidebarProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -49,11 +52,16 @@ const AdminSidebar = () => {
   const toggleSidebar = () => {
     setCollapsed((prev) => {
       const newCollapsed = !prev;
+      const newWidth = newCollapsed ? '80px' : '250px';
+      
       // Update CSS variable for sidebar width
-      document.documentElement.style.setProperty(
-        '--sidebar-width', 
-        newCollapsed ? '80px' : '250px'
-      );
+      document.documentElement.style.setProperty('--sidebar-width', newWidth);
+      
+      // Notify parent component
+      if (onWidthChange) {
+        onWidthChange(newWidth);
+      }
+      
       return newCollapsed;
     });
   };
